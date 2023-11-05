@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, QVBoxLayout, QWidget, QDockWidget
 from PyQt5.QtCore import Qt
 
@@ -37,11 +38,16 @@ class CodeEditor(QMainWindow):
 
     def setupFileExplorer(self):
         fileModel = QFileSystemModel()
-        fileModel.setRootPath('C:/')  # Set the root directory
+        root_path = os.getcwd()
+        fileModel.setRootPath(root_path)
 
         fileTreeView = QTreeView()
         fileTreeView.setModel(fileModel)
-        fileTreeView.setRootIndex(fileModel.index('C:/'))  # Set the root index to 'C:/'
+        fileTreeView.setRootIndex(fileModel.index(root_path))
+
+        # Hide "Date Modified," "Type," and "Size" columns
+        for column in range(1, 4):
+            fileTreeView.header().setSectionHidden(column, True)
 
         fileExplorerLayout = QVBoxLayout()
         fileExplorerLayout.addWidget(fileTreeView)
@@ -69,7 +75,7 @@ class CodeEditor(QMainWindow):
     def saveFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Python Files (*.py);;Text Files (*..txt);;All Files (*)", options=options)
+        file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Python Files (*.py);;Text Files (*.txt);;All Files (*)", options=options)
 
         if file_name:
             with open(file_name, 'w') as file:
