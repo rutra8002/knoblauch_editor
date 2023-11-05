@@ -12,6 +12,10 @@ class CodeEditor(QMainWindow):
         self.current_file_path = None
 
     def initUI(self):
+        # Load the style sheet
+        with open('style.qss', 'r') as file:
+            self.setStyleSheet(file.read())
+
         self.textEdit = QTextEdit()
         self.setCentralWidget(self.textEdit)
 
