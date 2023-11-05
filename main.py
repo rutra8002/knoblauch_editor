@@ -122,11 +122,10 @@ class CodeEditor(QMainWindow):
             self.current_file_path = file_name
 
     def openFileFromExplorer(self, index: QModelIndex):
-        file_path = self.fileModel.filePath(index)
-        if os.path.isfile(file_path):
-            with open(file_path, 'r') as file:
+        self.current_file_path = self.fileModel.filePath(index)
+        if os.path.isfile(self.current_file_path):
+            with open(self.current_file_path, 'r') as file:
                 self.textEdit.setPlainText(file.read())
-                self.current_file_path = file_path
 
     def showContextMenu(self, pos):
         index = self.fileTreeView.indexAt(pos)
@@ -168,11 +167,7 @@ class CodeEditor(QMainWindow):
                 self.renaming_item = None
         return False
 
-    def openFileFromExplorer(self, index: QModelIndex):
-        self.current_file_path = self.fileModel.filePath(index)
-        if os.path.isfile(self.current_file_path):
-            with open(self.current_file_path, 'r') as file:
-                self.textEdit.setPlainText(file.read())
+
 
     def deleteFileFromExplorer(self, index: QModelIndex):
         file_path = self.fileModel.filePath(index)
@@ -196,15 +191,6 @@ class CodeEditor(QMainWindow):
         if new_file_name:
             with open(new_file_name, 'w') as file:
                 file.write("")
-    def deleteFileFromExplorer(self, index):
-        file_path = self.fileModel.filePath(index)
-        if os.path.isfile(file_path):
-            try:
-                os.remove(file_path)
-            except OSError as e:
-                QMessageBox.critical(self, "Error", f"Failed to delete the file: {str(e)}")
-            else:
-                self.fileModel.remove(index)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
