@@ -2,6 +2,7 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, QVBoxLayout, QWidget, QDockWidget
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QModelIndex
 
 class CodeEditor(QMainWindow):
     def __init__(self):
@@ -45,7 +46,6 @@ class CodeEditor(QMainWindow):
         fileTreeView.setModel(fileModel)
         fileTreeView.setRootIndex(fileModel.index(root_path))
 
-        # Hide "Date Modified," "Type," and "Size" columns
         for column in range(1, 4):
             fileTreeView.header().setSectionHidden(column, True)
 
@@ -59,6 +59,12 @@ class CodeEditor(QMainWindow):
         dock.setWidget(fileExplorerWidget)
 
         self.addDockWidget(Qt.LeftDockWidgetArea, dock)
+
+        # Connect double-click signal to openFileFromExplorer
+        fileTreeView.doubleClicked.connect(self.openFileFromExplorer)
+
+        self.fileModel = fileModel
+        self.fileTreeView = fileTreeView
 
     def newFile(self):
         self.textEdit.clear()
@@ -80,6 +86,12 @@ class CodeEditor(QMainWindow):
         if file_name:
             with open(file_name, 'w') as file:
                 file.write(self.textEdit.toPlainText())
+
+    def openFileFromExplorer(self, index: QModelIndex):
+        file_path = self.fileModel.filePath(index)
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as file:
+                self.textEdit.setPlainText(file.read())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
