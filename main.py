@@ -1,6 +1,7 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, QVBoxLayout, QWidget, QDockWidget, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
+    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 
@@ -41,6 +42,9 @@ class CodeEditor(QMainWindow):
         fileMenu.addAction(saveAsAction)  # Add "Save As" action to the menu
 
         self.setupFileExplorer()
+
+        self.fileTreeView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.fileTreeView.customContextMenuRequested.connect(self.showContextMenu)
 
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle('Simple Code Editor')
@@ -111,6 +115,31 @@ class CodeEditor(QMainWindow):
             with open(file_path, 'r') as file:
                 self.textEdit.setPlainText(file.read())
                 self.current_file_path = file_path
+
+    def showContextMenu(self, pos):
+        index = self.fileTreeView.indexAt(pos)
+        if index.isValid():
+            menu = QMenu(self)
+
+            open_action = QAction('Open', self)
+            open_action.triggered.connect(lambda: self.openFileFromExplorer(index))
+            menu.addAction(open_action)
+
+            delete_action = QAction('Delete', self)
+            delete_action.triggered.connect(lambda: self.deleteFileFromExplorer(index))
+            menu.addAction(delete_action)
+
+            menu.exec_(self.fileTreeView.mapToGlobal(pos))
+
+    def deleteFileFromExplorer(self, index):
+        file_path = self.fileModel.filePath(index)
+        if os.path.isfile(file_path):
+            try:
+                os.remove(file_path)
+            except OSError as e:
+                QMessageBox.critical(self, "Error", f"Failed to delete the file: {str(e)}")
+            else:
+                self.fileModel.remove(index)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
