@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, QVBoxLayout, QWidget, QDockWidget
+from PyQt5.QtCore import Qt
 
 class CodeEditor(QMainWindow):
     def __init__(self):
@@ -28,9 +29,30 @@ class CodeEditor(QMainWindow):
         fileMenu.addAction(openAction)
         fileMenu.addAction(saveAction)
 
+        self.setupFileExplorer()
+
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle('Simple Code Editor')
         self.show()
+
+    def setupFileExplorer(self):
+        fileModel = QFileSystemModel()
+        fileModel.setRootPath('C:/')  # Set the root directory
+
+        fileTreeView = QTreeView()
+        fileTreeView.setModel(fileModel)
+        fileTreeView.setRootIndex(fileModel.index('C:/'))  # Set the root index to 'C:/'
+
+        fileExplorerLayout = QVBoxLayout()
+        fileExplorerLayout.addWidget(fileTreeView)
+
+        fileExplorerWidget = QWidget()
+        fileExplorerWidget.setLayout(fileExplorerLayout)
+
+        dock = QDockWidget("File Explorer", self)
+        dock.setWidget(fileExplorerWidget)
+
+        self.addDockWidget(Qt.LeftDockWidgetArea, dock)
 
     def newFile(self):
         self.textEdit.clear()
@@ -47,7 +69,7 @@ class CodeEditor(QMainWindow):
     def saveFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Python Files (*.py);;Text Files (*.txt);;All Files (*)", options=options)
+        file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Python Files (*.py);;Text Files (*..txt);;All Files (*)", options=options)
 
         if file_name:
             with open(file_name, 'w') as file:
