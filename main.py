@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, QVBoxLayout, QWidget, QDockWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, QVBoxLayout, QWidget, QDockWidget, QMessageBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 
@@ -9,6 +9,7 @@ class CodeEditor(QMainWindow):
         super().__init__()
 
         self.initUI()
+        self.current_file_path = None  # Track the currently opened file
 
     def initUI(self):
         self.textEdit = QTextEdit()
@@ -60,7 +61,6 @@ class CodeEditor(QMainWindow):
 
         self.addDockWidget(Qt.LeftDockWidgetArea, dock)
 
-        # Connect double-click signal to openFileFromExplorer
         fileTreeView.doubleClicked.connect(self.openFileFromExplorer)
 
         self.fileModel = fileModel
@@ -68,6 +68,7 @@ class CodeEditor(QMainWindow):
 
     def newFile(self):
         self.textEdit.clear()
+        self.current_file_path = None  # Reset the currently opened file path
 
     def openFile(self):
         options = QFileDialog.Options()
@@ -77,8 +78,16 @@ class CodeEditor(QMainWindow):
         if file_name:
             with open(file_name, 'r') as file:
                 self.textEdit.setPlainText(file.read())
+                self.current_file_path = file_name  # Set the currently opened file path
 
     def saveFile(self):
+        if self.current_file_path:
+            with open(self.current_file_path, 'w') as file:
+                file.write(self.textEdit.toPlainText())
+        else:
+            self.saveFileAs()  # If there isn't any opened file, prompt to save as
+
+    def saveFileAs(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Python Files (*.py);;Text Files (*.txt);;All Files (*)", options=options)
@@ -86,12 +95,14 @@ class CodeEditor(QMainWindow):
         if file_name:
             with open(file_name, 'w') as file:
                 file.write(self.textEdit.toPlainText())
+            self.current_file_path = file_name
 
     def openFileFromExplorer(self, index: QModelIndex):
         file_path = self.fileModel.filePath(index)
         if os.path.isfile(file_path):
             with open(file_path, 'r') as file:
                 self.textEdit.setPlainText(file.read())
+                self.current_file_path = file_path
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
