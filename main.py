@@ -118,18 +118,29 @@ class CodeEditor(QMainWindow):
 
     def showContextMenu(self, pos):
         index = self.fileTreeView.indexAt(pos)
+
         if index.isValid():
             menu = QMenu(self)
-
             open_action = QAction('Open', self)
             open_action.triggered.connect(lambda: self.openFileFromExplorer(index))
             menu.addAction(open_action)
-
             delete_action = QAction('Delete', self)
             delete_action.triggered.connect(lambda: self.deleteFileFromExplorer(index))
             menu.addAction(delete_action)
+        else:
+            menu = QMenu(self)
+            new_file_action = QAction('New File', self)
+            new_file_action.triggered.connect(self.createNewFile)
+            menu.addAction(new_file_action)
 
-            menu.exec_(self.fileTreeView.mapToGlobal(pos))
+        menu.exec_(self.fileTreeView.mapToGlobal(pos))
+
+    def createNewFile(self):
+        new_file_name, _ = QFileDialog.getSaveFileName(self, "Create New File", "", "Text Files (*.txt);;All Files (*)")
+        if new_file_name:
+            with open(new_file_name, 'w') as file:
+                # Optionally, you can add initial content to the new file.
+                file.write("")
 
     def deleteFileFromExplorer(self, index):
         file_path = self.fileModel.filePath(index)
