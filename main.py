@@ -1,7 +1,7 @@
 import sys
 import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
-    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu
+    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 
@@ -130,12 +130,22 @@ class CodeEditor(QMainWindow):
         else:
             menu = QMenu(self)
             new_file_action = QAction('New File', self)
-            new_file_action.triggered.connect(self.createNewFile)
+            new_file_action.triggered.connect(self.showNewFileDialog)
             menu.addAction(new_file_action)
 
         menu.exec_(self.fileTreeView.mapToGlobal(pos))
 
+    def showNewFileDialog(self):
+        new_file_name, ok = QInputDialog.getText(self, "New File", "Enter the name of the new file (with extension):", QLineEdit.Normal, "")
+        if ok and new_file_name:
+            new_file_path = os.path.join(os.getcwd(), new_file_name)
+            with open(new_file_path, 'w') as file:
+                # Optionally, you can add initial content to the new file.
+                file.write("")
+
     def createNewFile(self):
+        # Implement logic to create a new file here
+        # For example:
         new_file_name, _ = QFileDialog.getSaveFileName(self, "Create New File", "", "Text Files (*.txt);;All Files (*)")
         if new_file_name:
             with open(new_file_name, 'w') as file:
