@@ -46,6 +46,12 @@ class CodeEditor(QMainWindow):
         self.fileTreeView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.fileTreeView.customContextMenuRequested.connect(self.showContextMenu)
 
+        # Add an event filter to detect item renaming
+        self.fileTreeView.installEventFilter(self)
+
+        # Store the item being renamed
+        self.renaming_item = None
+
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle('Simple Code Editor')
         self.show()
@@ -127,6 +133,9 @@ class CodeEditor(QMainWindow):
             delete_action = QAction('Delete', self)
             delete_action.triggered.connect(lambda: self.deleteFileFromExplorer(index))
             menu.addAction(delete_action)
+            rename_action = QAction('Rename', self)
+            rename_action.triggered.connect(lambda: self.renameFileFromExplorer(index))
+            menu.addAction(rename_action)
         else:
             menu = QMenu(self)
             new_file_action = QAction('New File', self)
@@ -134,6 +143,40 @@ class CodeEditor(QMainWindow):
             menu.addAction(new_file_action)
 
         menu.exec_(self.fileTreeView.mapToGlobal(pos))
+
+    def renameFileFromExplorer(self, index):
+        item = self.fileModel.index(index.row(), 0, index.parent())
+        item_path = self.fileModel.filePath(item)
+        new_name, ok = QInputDialog.getText(self, "Rename", "Enter a new name (with extension):", QLineEdit.Normal, os.path.basename(item_path))
+        if ok and new_name:
+            new_item_path = os.path.join(os.path.dirname(item_path), new_name)
+            if os.path.exists(new_item_path):
+                QMessageBox.critical(self, "Error", "A file with that name already exists.")
+            else:
+                os.rename(item_path, new_item_path)
+
+    def eventFilter(self, obj, event):
+        if event.type() == event.KeyPress and event.key() == Qt.Key_Return:
+            if self.renaming_item:
+                self.renameFileFromExplorer(self.renaming_item)
+                self.renaming_item = None
+        return False
+
+    def openFileFromExplorer(self, index: QModelIndex):
+        self.current_file_path = self.fileModel.filePath(index)
+        if os.path.isfile(self.current_file_path):
+            with open(self.current_file_path, 'r') as file:
+                self.textEdit.setPlainText(file.read())
+
+    def deleteFileFromExplorer(self, index: QModelIndex):
+        file_path = self.fileModel.filePath(index)
+        if os.path.isfile(file_path):
+            try:
+                os.remove(file_path)
+            except OSError as e:
+                QMessageBox.critical(self, "Error", f"Failed to delete the file: {str(e)}")
+            else:
+                self.fileModel.remove(index)
 
     def showNewFileDialog(self):
         new_file_name, ok = QInputDialog.getText(self, "New File", "Enter the name of the new file (with extension):", QLineEdit.Normal, "")
