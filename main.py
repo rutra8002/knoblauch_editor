@@ -183,18 +183,13 @@ class CodeEditor(QMainWindow):
         if ok and new_file_name:
             new_file_path = os.path.join(os.getcwd(), new_file_name)
             with open(new_file_path, 'w') as file:
-                # Optionally, you can add initial content to the new file.
                 file.write("")
 
     def createNewFile(self):
-        # Implement logic to create a new file here
-        # For example:
         new_file_name, _ = QFileDialog.getSaveFileName(self, "Create New File", "", "Text Files (*.txt);;All Files (*)")
         if new_file_name:
             with open(new_file_name, 'w') as file:
-                # Optionally, you can add initial content to the new file.
                 file.write("")
-
     def deleteFileFromExplorer(self, index):
         file_path = self.fileModel.filePath(index)
         if os.path.isfile(file_path):
