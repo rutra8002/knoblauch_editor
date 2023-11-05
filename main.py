@@ -9,7 +9,7 @@ class CodeEditor(QMainWindow):
         super().__init__()
 
         self.initUI()
-        self.current_file_path = None  # Track the currently opened file
+        self.current_file_path = None
 
     def initUI(self):
         self.textEdit = QTextEdit()
@@ -24,6 +24,9 @@ class CodeEditor(QMainWindow):
         saveAction = QAction('Save', self)
         saveAction.triggered.connect(self.saveFile)
 
+        saveAsAction = QAction('Save As', self)  # Create a "Save As" action
+        saveAsAction.triggered.connect(self.saveFileAs)  # Connect it to the saveFileAs method
+
         self.statusBar()
 
         menubar = self.menuBar()
@@ -31,6 +34,7 @@ class CodeEditor(QMainWindow):
         fileMenu.addAction(newAction)
         fileMenu.addAction(openAction)
         fileMenu.addAction(saveAction)
+        fileMenu.addAction(saveAsAction)  # Add "Save As" action to the menu
 
         self.setupFileExplorer()
 
@@ -68,7 +72,7 @@ class CodeEditor(QMainWindow):
 
     def newFile(self):
         self.textEdit.clear()
-        self.current_file_path = None  # Reset the currently opened file path
+        self.current_file_path = None
 
     def openFile(self):
         options = QFileDialog.Options()
@@ -78,14 +82,14 @@ class CodeEditor(QMainWindow):
         if file_name:
             with open(file_name, 'r') as file:
                 self.textEdit.setPlainText(file.read())
-                self.current_file_path = file_name  # Set the currently opened file path
+                self.current_file_path = file_name
 
     def saveFile(self):
         if self.current_file_path:
             with open(self.current_file_path, 'w') as file:
                 file.write(self.textEdit.toPlainText())
         else:
-            self.saveFileAs()  # If there isn't any opened file, prompt to save as
+            self.saveFileAs()
 
     def saveFileAs(self):
         options = QFileDialog.Options()
