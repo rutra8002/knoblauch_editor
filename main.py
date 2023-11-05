@@ -1,5 +1,7 @@
 import sys
 import os
+
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
     QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit
 from PyQt5.QtCore import Qt
@@ -20,6 +22,12 @@ class CodeEditor(QMainWindow):
         self.textEdit = QTextEdit()
         self.setCentralWidget(self.textEdit)
 
+        font = self.textEdit.font()
+        font.setStyleHint(QFont.TypeWriter)
+        font.setFamily("Courier")
+        font.setPointSize(12)
+        self.textEdit.setFont(font)
+
         newAction = QAction('New', self)
         newAction.triggered.connect(self.newFile)
 
@@ -29,8 +37,8 @@ class CodeEditor(QMainWindow):
         saveAction = QAction('Save', self)
         saveAction.triggered.connect(self.saveFile)
 
-        saveAsAction = QAction('Save As', self)  # Create a "Save As" action
-        saveAsAction.triggered.connect(self.saveFileAs)  # Connect it to the saveFileAs method
+        saveAsAction = QAction('Save As', self)
+        saveAsAction.triggered.connect(self.saveFileAs)
 
         self.statusBar()
 
@@ -39,17 +47,15 @@ class CodeEditor(QMainWindow):
         fileMenu.addAction(newAction)
         fileMenu.addAction(openAction)
         fileMenu.addAction(saveAction)
-        fileMenu.addAction(saveAsAction)  # Add "Save As" action to the menu
+        fileMenu.addAction(saveAsAction)
 
         self.setupFileExplorer()
 
         self.fileTreeView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.fileTreeView.customContextMenuRequested.connect(self.showContextMenu)
 
-        # Add an event filter to detect item renaming
         self.fileTreeView.installEventFilter(self)
 
-        # Store the item being renamed
         self.renaming_item = None
 
         self.setGeometry(100, 100, 800, 600)
