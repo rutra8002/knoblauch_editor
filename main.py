@@ -197,6 +197,26 @@ class CodeEditor(QMainWindow):
             with open(new_file_name, 'w') as file:
                 file.write("")
 
+    def closeEvent(self, event):
+        if self.current_file_path:
+            with open(self.current_file_path, 'r') as file:
+                file_content = file.read()
+
+            if self.textEdit.toPlainText() != file_content:
+                reply = QMessageBox.question(self, 'Unsaved Changes',
+                                             'You have unsaved changes. Do you want to save before exiting?',
+                                             QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel,
+                                             QMessageBox.Save)
+
+                if reply == QMessageBox.Save:
+                    self.saveFile()
+                elif reply == QMessageBox.Cancel:
+                    event.ignore()  # The application will not be closed
+                    return
+                # If the user chooses Discard, the application will close without saving.
+
+        event.accept()  #
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     editor = CodeEditor()
