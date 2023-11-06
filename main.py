@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFile
     QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
+from PyQt5.QtGui import QKeySequence
 
 class CodeEditor(QMainWindow):
     def __init__(self):
@@ -54,6 +55,17 @@ class CodeEditor(QMainWindow):
         fileMenu.addAction(saveAction)
         fileMenu.addAction(saveAsAction)
 
+        newShortcut = QKeySequence.New
+        openShortcut = QKeySequence.Open
+        saveShortcut = QKeySequence.Save
+        saveAsShortcut = QKeySequence.SaveAs
+
+        # Create actions for keyboard shortcuts
+        newAction.setShortcut(newShortcut)
+        openAction.setShortcut(openShortcut)
+        saveAction.setShortcut(saveShortcut)
+        saveAsAction.setShortcut(saveAsShortcut)
+
         self.setupFileExplorer()
 
         self.fileTreeView.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -96,8 +108,16 @@ class CodeEditor(QMainWindow):
         self.fileTreeView = fileTreeView
 
     def newFile(self):
-        self.textEdit.clear()
-        self.current_file_path = None
+        new_file_name, ok = QInputDialog.getText(self, "New File", "Enter the name of the new file (with extension):",
+                                                 QLineEdit.Normal, "")
+
+        if ok and new_file_name:
+            new_file_path = os.path.join(os.getcwd(), new_file_name)
+            with open(new_file_path, 'w') as file:
+                file.write("")
+
+            self.current_file_path = new_file_path
+            self.textEdit.clear()
 
     def openFile(self):
         options = QFileDialog.Options()
