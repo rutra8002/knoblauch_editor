@@ -3,7 +3,7 @@ import os
 from python_highlighter import PythonHighlighter
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
-    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit
+    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QTextBrowser
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
@@ -11,13 +11,18 @@ from PyQt5.QtGui import QKeySequence
 class CodeEditor(QMainWindow):
     def __init__(self):
         super().__init__()
-
         self.initUI()
         self.current_file_path = None
-
         self.highlighter = PythonHighlighter(self.textEdit.document())
-
         self.textEdit.setTabStopWidth(4 * self.textEdit.fontMetrics().width(' '))
+
+        # Set a custom font with antialiasing
+        font = QFont()
+        font.setStyleHint(QFont.TypeWriter)
+        font.setFamily("Courier")
+        font.setPointSize(12)
+        font.setStyleStrategy(QFont.PreferAntialias)  # Enable antialiasing
+        self.textEdit.setFont(font)
 
 
     def initUI(self):
@@ -239,5 +244,9 @@ class CodeEditor(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+
+    # Enable anti-aliasing for the entire application
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
+
     editor = CodeEditor()
     sys.exit(app.exec_())
