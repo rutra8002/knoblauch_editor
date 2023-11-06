@@ -10,9 +10,12 @@ class PythonHighlighter(QSyntaxHighlighter):
         keywordFormat.setForeground(Qt.darkYellow)
         keywordFormat.setFontWeight(QFont.Bold)
 
-        keywords = ["and", "as", "assert", "async", "await", "break", "class", "continue", "def", "del", "elif", "else",
-                    "except", "False", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "None",
-                    "nonlocal", "not", "or", "pass", "raise", "return", "True", "try", "while", "with", "yield"]
+        keywords = [
+            "in", "is", "and", "or", "not", "as", "from", "with", "import", "class",
+            "try", "except", "finally", "raise", "assert", "pass", "break", "continue",
+            "if", "else", "elif", "while", "for", "return", "True", "False", "None",
+            "async", "await", "global", "nonlocal", "lambda"
+        ]
 
         self.highlightingRules = [(QRegularExpression(r'\b' + keyword + r'\b'), keywordFormat) for keyword in keywords]
 
