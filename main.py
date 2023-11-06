@@ -1,6 +1,6 @@
 import sys
 import os
-
+from python_highlighter import PythonHighlighter
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
     QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit
@@ -13,6 +13,8 @@ class CodeEditor(QMainWindow):
 
         self.initUI()
         self.current_file_path = None
+
+        self.highlighter = PythonHighlighter(self.textEdit.document())
 
     def initUI(self):
         # Load the style sheet
