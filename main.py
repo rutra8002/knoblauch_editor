@@ -18,6 +18,7 @@ class CodeEditor(QMainWindow):
 
         self.textEdit.setTabStopWidth(4 * self.textEdit.fontMetrics().width(' '))
 
+
     def initUI(self):
         # Load the style sheet
         with open('style.qss', 'r') as file:
