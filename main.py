@@ -16,6 +16,8 @@ class CodeEditor(QMainWindow):
 
         self.highlighter = PythonHighlighter(self.textEdit.document())
 
+        self.textEdit.setTabStopWidth(4 * self.textEdit.fontMetrics().width(' '))
+
     def initUI(self):
         # Load the style sheet
         with open('style.qss', 'r') as file:
