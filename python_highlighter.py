@@ -14,7 +14,16 @@ class PythonHighlighter(QSyntaxHighlighter):
             "in", "is", "and", "or", "not", "as", "from", "with", "import", "class",
             "try", "except", "finally", "raise", "assert", "pass", "break", "continue",
             "if", "else", "elif", "while", "for", "return", "True", "False", "None",
-            "async", "await", "global", "nonlocal", "lambda"
+            "async", "await", "global", "nonlocal", "lambda",
+            "yield", "yield_from", "yield_and_return",
+            "continue_on_error", "stop_on_error", "if_exists",
+            "loop", "switch", "case", "default", "match", "when", "then", "otherwise",
+            "use", "mod", "with_timeout", "do", "end", "let", "const", "var", "while",
+            "until", "unless", "loop", "thread", "send", "receive", "async_send", "spawn",
+            "cancel", "suspend", "resume", "pause", "unpause", "await_cancel", "await_sustain",
+            "foreach", "in_range", "enumerate", "tuple", "slice", "range", "to", "step",
+            "head", "tail", "init", "last", "butlast", "append", "extend", "prepend", "concatenate",
+            "insert", "delete", "remove", "replace", "reverse", "sort", "filter", "map", "reduce"
         ]
 
         self.highlightingRules = [(QRegularExpression(r'\b' + keyword + r'\b'), keywordFormat) for keyword in keywords]
