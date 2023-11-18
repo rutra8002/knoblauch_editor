@@ -38,20 +38,8 @@ class CodeEditor(QMainWindow):
         font.setPointSize(24)
         splash.setFont(font)
 
-        progress_bar = QProgressBar(splash)
-        progress_bar.setGeometry(10, splash.height() - 30, splash.width() - 20, 20)
-        progress_bar.setAlignment(Qt.AlignCenter)
-        progress_bar.setStyleSheet("QProgressBar { border: 2px solid grey; border-radius: 5px; background: white; }"
-                                   "QProgressBar::chunk { background: #2C82C9; }")
-
-        splash.showMessage("KB Editor", Qt.AlignCenter | Qt.AlignBottom, Qt.white)
+        splash.showMessage("KB Editor", Qt.AlignCenter | Qt.AlignCenter, Qt.white)
         splash.show()
-
-        # Simulate some initialization work (replace this with actual initialization)
-        for i in range(1, 101):
-            progress_bar.setValue(i)
-            QApplication.processEvents()
-            QTimer.singleShot(10, lambda: None)  # Small delay to update the splash screen
 
         splash.finish(self)
 
