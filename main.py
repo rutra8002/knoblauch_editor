@@ -3,7 +3,7 @@ import os
 from python_highlighter import PythonHighlighter
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
-    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QTextBrowser
+    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QTextBrowser, QPushButton
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
@@ -23,7 +23,6 @@ class CodeEditor(QMainWindow):
         font.setPointSize(12)
         font.setStyleStrategy(QFont.PreferAntialias)  # Enable antialiasing
         self.textEdit.setFont(font)
-
 
     def initUI(self):
         # Load the style sheet
@@ -241,6 +240,15 @@ class CodeEditor(QMainWindow):
                 # If the user chooses Discard, the application will close without saving.
 
         event.accept()  #
+
+def excepthook(exc_type, exc_value, traceback):
+    """
+    Global exception handler to display an error dialog.
+    """
+    QMessageBox.critical(None, "Unhandled Exception", f"An unhandled exception occurred:\n{exc_type.__name__}: {exc_value}")
+
+# Set the global exception hook
+sys.excepthook = excepthook
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
