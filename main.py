@@ -33,6 +33,11 @@ class CodeEditor(QMainWindow):
         with open('style.qss', 'r') as file:
             splash.setStyleSheet(file.read())
 
+        # Set a custom font with larger size
+        font = QFont()
+        font.setPointSize(24)
+        splash.setFont(font)
+
         progress_bar = QProgressBar(splash)
         progress_bar.setGeometry(10, splash.height() - 30, splash.width() - 20, 20)
         progress_bar.setAlignment(Qt.AlignCenter)
