@@ -153,8 +153,15 @@ class CodeEditor(QMainWindow):
     def openFileFromExplorer(self, index: QModelIndex):
         self.current_file_path = self.fileModel.filePath(index)
         if os.path.isfile(self.current_file_path):
-            with open(self.current_file_path, 'r') as file:
-                self.textEdit.setPlainText(file.read())
+            _, file_extension = os.path.splitext(self.current_file_path)
+            if file_extension == '.py':
+                with open(self.current_file_path, 'r') as file:
+                    self.textEdit.setPlainText(file.read())
+                self.highlighter = PythonHighlighter(self.textEdit.document())
+            else:
+                self.highlighter = None
+                with open(self.current_file_path, 'r') as file:
+                    self.textEdit.setPlainText(file.read())
 
     def showContextMenu(self, pos):
         index = self.fileTreeView.indexAt(pos)
