@@ -1,10 +1,11 @@
 import sys
 import os
 from python_highlighter import PythonHighlighter
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
-    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QTextBrowser, QPushButton
-from PyQt5.QtCore import Qt
+    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QTextBrowser, QPushButton, \
+    QSplashScreen, QProgressBar
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
 
@@ -24,7 +25,33 @@ class CodeEditor(QMainWindow):
         font.setStyleStrategy(QFont.PreferAntialias)  # Enable antialiasing
         self.textEdit.setFont(font)
 
+    def showSplashScreen(self):
+        splash = QSplashScreen()
+        splash.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+
+        # Apply style from style.qss to the splash screen
+        with open('style.qss', 'r') as file:
+            splash.setStyleSheet(file.read())
+
+        progress_bar = QProgressBar(splash)
+        progress_bar.setGeometry(10, splash.height() - 30, splash.width() - 20, 20)
+        progress_bar.setAlignment(Qt.AlignCenter)
+        progress_bar.setStyleSheet("QProgressBar { border: 2px solid grey; border-radius: 5px; background: white; }"
+                                   "QProgressBar::chunk { background: #2C82C9; }")
+
+        splash.showMessage("KB Editor", Qt.AlignCenter | Qt.AlignBottom, Qt.white)
+        splash.show()
+
+        # Simulate some initialization work (replace this with actual initialization)
+        for i in range(1, 101):
+            progress_bar.setValue(i)
+            QApplication.processEvents()
+            QTimer.singleShot(10, lambda: None)  # Small delay to update the splash screen
+
+        splash.finish(self)
+
     def initUI(self):
+        self.showSplashScreen()
         # Load the style sheet
         with open('style.qss', 'r') as file:
             self.setStyleSheet(file.read())
@@ -253,6 +280,7 @@ def excepthook(exc_type, exc_value, traceback):
     Global exception handler to display an error dialog.
     """
     QMessageBox.critical(None, "Unhandled Exception", f"An unhandled exception occurred:\n{exc_type.__name__}: {exc_value}")
+    print(f"An unhandled exception occurred:\n{exc_type.__name__}: {exc_value}")
 
 # Set the global exception hook
 sys.excepthook = excepthook
