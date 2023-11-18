@@ -1,13 +1,13 @@
 import sys
 import os
 from python_highlighter import PythonHighlighter
-from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
-    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QTextBrowser, QPushButton, \
-    QSplashScreen, QProgressBar
-from PyQt5.QtCore import Qt, QTimer
+    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QSplashScreen
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
+
 
 class CodeEditor(QMainWindow):
     def __init__(self):
@@ -146,7 +146,9 @@ class CodeEditor(QMainWindow):
     def openFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Python Files (*.py);;Text Files (*.txt);;All Files (*)", options=options)
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", "",
+                                                   "Python Files (*.py);;Text Files (*.txt);;All Files (*)",
+                                                   options=options)
 
         if file_name:
             with open(file_name, 'r') as file:
@@ -163,7 +165,9 @@ class CodeEditor(QMainWindow):
     def saveFileAs(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Python Files (*.py);;Text Files (*.txt);;All Files (*)", options=options)
+        file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "",
+                                                   "Python Files (*.py);;Text Files (*.txt);;All Files (*)",
+                                                   options=options)
 
         if file_name:
             with open(file_name, 'w') as file:
@@ -208,7 +212,8 @@ class CodeEditor(QMainWindow):
     def renameFileFromExplorer(self, index):
         item = self.fileModel.index(index.row(), 0, index.parent())
         item_path = self.fileModel.filePath(item)
-        new_name, ok = QInputDialog.getText(self, "Rename", "Enter a new name (with extension):", QLineEdit.Normal, os.path.basename(item_path))
+        new_name, ok = QInputDialog.getText(self, "Rename", "Enter a new name (with extension):", QLineEdit.Normal,
+                                            os.path.basename(item_path))
         if ok and new_name:
             new_item_path = os.path.join(os.path.dirname(item_path), new_name)
             if os.path.exists(new_item_path):
@@ -223,8 +228,6 @@ class CodeEditor(QMainWindow):
                 self.renaming_item = None
         return False
 
-
-
     def deleteFileFromExplorer(self, index: QModelIndex):
         file_path = self.fileModel.filePath(index)
         if os.path.isfile(file_path):
@@ -236,7 +239,8 @@ class CodeEditor(QMainWindow):
                 self.fileModel.remove(index)
 
     def showNewFileDialog(self):
-        new_file_name, ok = QInputDialog.getText(self, "New File", "Enter the name of the new file (with extension):", QLineEdit.Normal, "")
+        new_file_name, ok = QInputDialog.getText(self, "New File", "Enter the name of the new file (with extension):",
+                                                 QLineEdit.Normal, "")
         if ok and new_file_name:
             new_file_path = os.path.join(os.getcwd(), new_file_name)
             with open(new_file_path, 'w') as file:
@@ -268,12 +272,15 @@ class CodeEditor(QMainWindow):
 
         event.accept()  #
 
+
 def excepthook(exc_type, exc_value, traceback):
     """
     Global exception handler to display an error dialog.
     """
-    QMessageBox.critical(None, "Unhandled Exception", f"An unhandled exception occurred:\n{exc_type.__name__}: {exc_value}")
+    QMessageBox.critical(None, "Unhandled Exception",
+                         f"An unhandled exception occurred:\n{exc_type.__name__}: {exc_value}")
     print(f"An unhandled exception occurred:\n{exc_type.__name__}: {exc_value}")
+
 
 # Set the global exception hook
 sys.excepthook = excepthook
