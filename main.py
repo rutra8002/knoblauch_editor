@@ -1,3 +1,4 @@
+import subprocess
 import sys
 import os
 from python_highlighter import PythonHighlighter
@@ -5,10 +6,49 @@ from html_highlighter import HtmlHighlighter  # Adjust the import based on the a
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
     QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QSplashScreen, QDialog, QTabWidget, \
-    QLabel
+    QLabel, QPlainTextEdit, QPushButton
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
+
+class TerminalWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.initUI()
+
+    def initUI(self):
+        self.terminalTextEdit = QPlainTextEdit(self)
+        self.terminalTextEdit.setReadOnly(True)
+
+        self.commandLineEdit = QLineEdit(self)
+        self.runButton = QPushButton('Run', self)
+        self.runButton.clicked.connect(self.runCommand)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.terminalTextEdit)
+        layout.addWidget(self.commandLineEdit)
+        layout.addWidget(self.runButton)
+
+    def runCommand(self):
+        command = self.commandLineEdit.text()
+
+        process = subprocess.Popen(command,
+                                   shell=True,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,
+                                   text=True)
+
+        output, error = process.communicate()
+
+        self.terminalTextEdit.insertPlainText(f"> {command}\n")
+        self.terminalTextEdit.insertPlainText(output)
+        self.terminalTextEdit.insertPlainText(error)
+        self.terminalTextEdit.insertPlainText("\n")
+
+        # Clear the command line after running the command
+        self.commandLineEdit.clear()
+
 
 class CodeEditor(QMainWindow):
     def __init__(self):
@@ -25,6 +65,8 @@ class CodeEditor(QMainWindow):
         font.setPointSize(12)
         font.setStyleStrategy(QFont.PreferAntialias)  # Enable antialiasing
         self.textEdit.setFont(font)
+
+        self.initTerminal()
 
     def showSplashScreen(self):
         splash = QSplashScreen()
@@ -110,11 +152,19 @@ class CodeEditor(QMainWindow):
         self.setWindowTitle('Simple Code Editor')
         self.show()
 
+    def initTerminal(self):
+        self.terminalWidget = TerminalWidget()
+
+        terminalDock = QDockWidget("Terminal", self)
+        terminalDock.setWidget(self.terminalWidget)
+
+        self.addDockWidget(Qt.BottomDockWidgetArea, terminalDock)
+
     def showAboutDialog(self):
         aboutDialog = QDialog(self)
         aboutDialog.setWindowTitle('About Knoblauch Baguette Editor')
 
-        versionLabel = QLabel('Knoblauch Baguette Editor Beta v0.3')
+        versionLabel = QLabel('Knoblauch Baguette Editor Beta v0.3.5 Terminal Edition')
 
         aboutDialogLayout = QVBoxLayout()
         aboutDialogLayout.addWidget(versionLabel)
