@@ -1,18 +1,22 @@
 from PyQt5.QtCore import Qt, QRegularExpression
-from PyQt5.QtGui import QTextCharFormat, QSyntaxHighlighter, QFont
+from PyQt5.QtGui import QTextCharFormat, QTextCursor, QSyntaxHighlighter, QFont
 
 class HtmlHighlighter(QSyntaxHighlighter):
     def __init__(self, parent):
         super().__init__(parent)
 
-        tagFormat = QTextCharFormat()
-        tagFormat.setForeground(Qt.darkBlue)
-        tagFormat.setFontWeight(QFont.Bold)
+        redFormat = QTextCharFormat()
+        redFormat.setForeground(Qt.red)
+        redFormat.setFontWeight(QFont.Bold)
+
+        magentaFormat = QTextCharFormat()
+        magentaFormat.setForeground(Qt.magenta)
+        magentaFormat.setFontWeight(QFont.Bold)
 
         self.highlightingRules = [
-            (QRegularExpression(r'&[a-zA-Z0-9]+;'), tagFormat),  # HTML entities
-            (QRegularExpression(r'<\s*\b[a-zA-Z0-9_]+\b>'), tagFormat),  # Opening tags
-            (QRegularExpression(r'</\s*\b[a-zA-Z0-9_]+\b\s*>'), tagFormat),  # Closing tags
+            (QRegularExpression(r'&[a-zA-Z0-9]+;'), redFormat),  # HTML entities
+            (QRegularExpression(r'<\s*\b[a-zA-Z0-9_]+\b\s*>'), magentaFormat),  # Opening tags
+            (QRegularExpression(r'</\s*\b[a-zA-Z0-9_]+\b\s*>'), magentaFormat),  # Closing tags
         ]
 
         attributeFormat = QTextCharFormat()
