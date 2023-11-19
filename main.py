@@ -1,6 +1,7 @@
 import sys
 import os
 from python_highlighter import PythonHighlighter
+from html_highlighter import HtmlHighlighter  # Adjust the import based on the actual filename
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
     QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QSplashScreen
@@ -8,13 +9,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
 
-
 class CodeEditor(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
         self.current_file_path = None
-        self.highlighter = PythonHighlighter(self.textEdit.document())
+        self.highlighter = None  # Placeholder for the highlighter
         self.textEdit.setTabStopWidth(4 * self.textEdit.fontMetrics().width(' '))
 
         # Set a custom font with antialiasing
@@ -147,13 +147,24 @@ class CodeEditor(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", "",
-                                                   "Python Files (*.py);;Text Files (*.txt);;All Files (*)",
+                                                   "Python Files (*.py);;HTML Files (*.html);;Text Files (*.txt);;All Files (*)",
                                                    options=options)
 
         if file_name:
-            with open(file_name, 'r') as file:
-                self.textEdit.setPlainText(file.read())
-                self.current_file_path = file_name
+            self.loadFile(file_name)
+
+    def loadFile(self, file_name):
+        with open(file_name, 'r') as file:
+            self.textEdit.setPlainText(file.read())
+            self.current_file_path = file_name
+
+        _, file_extension = os.path.splitext(file_name)
+        if file_extension == '.py':
+            self.highlighter = PythonHighlighter(self.textEdit.document())
+        elif file_extension == '.html':
+            self.highlighter = HtmlHighlighter(self.textEdit.document())
+        else:
+            self.highlighter = None
 
     def saveFile(self):
         if self.current_file_path:
@@ -166,7 +177,7 @@ class CodeEditor(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "",
-                                                   "Python Files (*.py);;Text Files (*.txt);;All Files (*)",
+                                                   "Python Files (*.py);;HTML Files (*.html);;Text Files (*.txt);;All Files (*)",
                                                    options=options)
 
         if file_name:
@@ -182,6 +193,10 @@ class CodeEditor(QMainWindow):
                 with open(self.current_file_path, 'r') as file:
                     self.textEdit.setPlainText(file.read())
                 self.highlighter = PythonHighlighter(self.textEdit.document())
+            elif file_extension == '.html':
+                with open(self.current_file_path, 'r') as file:
+                    self.textEdit.setPlainText(file.read())
+                self.highlighter = HtmlHighlighter(self.textEdit.document())
             else:
                 self.highlighter = None
                 with open(self.current_file_path, 'r') as file:
