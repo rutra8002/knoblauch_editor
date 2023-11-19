@@ -1,16 +1,13 @@
 import subprocess
 import sys
 import os
-
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-
 from python_highlighter import PythonHighlighter
 from html_highlighter import HtmlHighlighter  # Adjust the import based on the actual filename
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
     QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QSplashScreen, QDialog, QTabWidget, \
     QLabel, QPlainTextEdit, QPushButton
-from PyQt5.QtCore import Qt, QEvent, QUrl
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
 
@@ -209,17 +206,6 @@ class CodeEditor(QMainWindow):
         terminalDock.setWidget(self.terminalWidget)
 
         self.addDockWidget(Qt.BottomDockWidgetArea, terminalDock)
-
-        # Adding QWebEngineView for chat.openai.com
-        self.chat_view = QWebEngineView()
-        self.chat_view.settings().setAttribute(QWebEngineSettings.JavascriptEnabled,
-                                               True)  # Ensure JavaScript is enabled
-        self.chat_view.setUrl(QUrl("https://stackoverflow.com"))
-
-        chatDock = QDockWidget("Stack Overflow", self)
-        chatDock.setWidget(self.chat_view)
-
-        self.addDockWidget(Qt.RightDockWidgetArea, chatDock)
 
     def showAboutDialog(self):
         aboutDialog = QDialog(self)
