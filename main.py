@@ -145,6 +145,16 @@ class CodeEditor(QMainWindow):
         saveAsAction = QAction('Save As', self)
         saveAsAction.triggered.connect(self.saveFileAs)
 
+        undoAction = QAction('Undo', self)
+        undoAction.setShortcut(QKeySequence.Undo)
+        undoAction.triggered.connect(self.textEdit.undo)
+
+        redoAction = QAction('Redo', self)
+        redoAction.setShortcut(QKeySequence.Redo)
+        redoAction.triggered.connect(self.textEdit.redo)
+
+
+
         self.statusBar()
 
         menubar = self.menuBar()
@@ -153,6 +163,8 @@ class CodeEditor(QMainWindow):
         fileMenu.addAction(openAction)
         fileMenu.addAction(saveAction)
         fileMenu.addAction(saveAsAction)
+        fileMenu.addAction(undoAction)
+        fileMenu.addAction(redoAction)
 
         # Add "About" menu
         aboutMenu = menubar.addMenu('About')
