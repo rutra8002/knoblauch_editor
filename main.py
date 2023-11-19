@@ -114,7 +114,7 @@ class CodeEditor(QMainWindow):
         aboutDialog = QDialog(self)
         aboutDialog.setWindowTitle('About Knoblauch Baguette Editor')
 
-        versionLabel = QLabel('Knoblauch Baguette Editor v0.3')
+        versionLabel = QLabel('Knoblauch Baguette Editor Beta v0.3')
 
         aboutDialogLayout = QVBoxLayout()
         aboutDialogLayout.addWidget(versionLabel)
