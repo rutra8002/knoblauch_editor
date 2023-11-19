@@ -7,7 +7,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
     QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QSplashScreen, QDialog, QTabWidget, \
     QLabel, QPlainTextEdit, QPushButton
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
 
@@ -15,13 +15,18 @@ class TerminalWidget(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.command_history = []  # Maintain a history of entered commands
+        self.command_index = 0  # Index to navigate through command history
+
         self.initUI()
 
     def initUI(self):
-        self.terminalTextEdit = QPlainTextEdit(self)
+        self.terminalTextEdit = QTextEdit(self)
         self.terminalTextEdit.setReadOnly(True)
 
         self.commandLineEdit = QLineEdit(self)
+        self.commandLineEdit.installEventFilter(self)  # Install event filter for command line
+
         self.runButton = QPushButton('Run', self)
         self.runButton.clicked.connect(self.runCommand)
 
@@ -32,12 +37,16 @@ class TerminalWidget(QWidget):
 
     def runCommand(self):
         command = self.commandLineEdit.text()
+        self.command_history.append(command)  # Add command to history
+        self.command_index = len(self.command_history)  # Set index to the latest command
 
-        process = subprocess.Popen(command,
-                                   shell=True,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE,
-                                   text=True)
+        process = subprocess.Popen(
+            command,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
 
         output, error = process.communicate()
 
@@ -49,6 +58,29 @@ class TerminalWidget(QWidget):
         # Clear the command line after running the command
         self.commandLineEdit.clear()
 
+    def eventFilter(self, obj, event):
+        # Handle key events for command line
+        if obj == self.commandLineEdit and event.type() == QEvent.KeyPress:
+            if event.key() == Qt.Key_Up:
+                # Navigate up in command history
+                if self.command_index > 0:
+                    self.command_index -= 1
+                    self.commandLineEdit.setText(self.command_history[self.command_index])
+            elif event.key() == Qt.Key_Down:
+                # Navigate down in command history
+                if self.command_index < len(self.command_history) - 1:
+                    self.command_index += 1
+                    self.commandLineEdit.setText(self.command_history[self.command_index])
+            elif event.key() == Qt.Key_Return:
+                # Run the command
+                self.runCommand()
+                return True  # Consume the Return key event
+            elif event.key() == Qt.Key_Escape:
+                # Clear the command line
+                self.commandLineEdit.clear()
+                return True  # Consume the Escape key event
+
+        return super().eventFilter(obj, event)
 
 class CodeEditor(QMainWindow):
     def __init__(self):
