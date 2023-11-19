@@ -146,11 +146,9 @@ class CodeEditor(QMainWindow):
         saveAsAction.triggered.connect(self.saveFileAs)
 
         undoAction = QAction('Undo', self)
-        undoAction.setShortcut(QKeySequence.Undo)
         undoAction.triggered.connect(self.textEdit.undo)
 
         redoAction = QAction('Redo', self)
-        redoAction.setShortcut(QKeySequence.Redo)
         redoAction.triggered.connect(self.textEdit.redo)
 
 
@@ -176,12 +174,17 @@ class CodeEditor(QMainWindow):
         openShortcut = QKeySequence.Open
         saveShortcut = QKeySequence.Save
         saveAsShortcut = QKeySequence.SaveAs
+        undoShortcut = QKeySequence.Undo
+        redoShortcut = QKeySequence.Redo
 
         # Create actions for keyboard shortcuts
         newAction.setShortcut(newShortcut)
         openAction.setShortcut(openShortcut)
         saveAction.setShortcut(saveShortcut)
         saveAsAction.setShortcut(saveAsShortcut)
+        undoAction.setShortcut(undoShortcut)
+        redoAction.setShortcut(redoShortcut)
+
 
         self.setupFileExplorer()
 
