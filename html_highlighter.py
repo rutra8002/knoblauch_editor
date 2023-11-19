@@ -1,5 +1,7 @@
 from PyQt5.QtCore import Qt, QRegularExpression
-from PyQt5.QtGui import QTextCharFormat, QTextCursor, QSyntaxHighlighter, QFont
+
+from PyQt5.QtGui import QTextCharFormat, QSyntaxHighlighter, QFont
+
 
 class HtmlHighlighter(QSyntaxHighlighter):
     def __init__(self, parent):
@@ -15,7 +17,7 @@ class HtmlHighlighter(QSyntaxHighlighter):
 
         self.highlightingRules = [
             (QRegularExpression(r'&[a-zA-Z0-9]+;'), redFormat),  # HTML entities
-            (QRegularExpression(r'<\s*\b[a-zA-Z0-9_]+\b\s*>'), magentaFormat),  # Opening tags
+            (QRegularExpression(r'<\s*\b[a-zA-Z0-9_]+\b(?:[^>"]*"[^"]*")*[^>]*\s*>'), magentaFormat),  # Opening tags
             (QRegularExpression(r'</\s*\b[a-zA-Z0-9_]+\b\s*>'), magentaFormat),  # Closing tags
         ]
 
