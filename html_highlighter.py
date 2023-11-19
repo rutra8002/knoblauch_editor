@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QRegularExpression
-from PyQt5.QtGui import QTextCharFormat, QTextCursor, QSyntaxHighlighter, QFont
+from PyQt5.QtGui import QTextCharFormat, QSyntaxHighlighter, QFont
 
 class HtmlHighlighter(QSyntaxHighlighter):
     def __init__(self, parent):
