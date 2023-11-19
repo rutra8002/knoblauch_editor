@@ -4,7 +4,8 @@ from python_highlighter import PythonHighlighter
 from html_highlighter import HtmlHighlighter  # Adjust the import based on the actual filename
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QFileDialog, QFileSystemModel, QTreeView, \
-    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QSplashScreen
+    QVBoxLayout, QWidget, QDockWidget, QMessageBox, QMenu, QInputDialog, QLineEdit, QSplashScreen, QDialog, QTabWidget, \
+    QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtGui import QKeySequence
@@ -79,6 +80,12 @@ class CodeEditor(QMainWindow):
         fileMenu.addAction(saveAction)
         fileMenu.addAction(saveAsAction)
 
+        # Add "About" menu
+        aboutMenu = menubar.addMenu('About')
+        aboutAction = QAction('About', self)
+        aboutAction.triggered.connect(self.showAboutDialog)
+        aboutMenu.addAction(aboutAction)
+
         newShortcut = QKeySequence.New
         openShortcut = QKeySequence.Open
         saveShortcut = QKeySequence.Save
@@ -102,6 +109,18 @@ class CodeEditor(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle('Simple Code Editor')
         self.show()
+
+    def showAboutDialog(self):
+        aboutDialog = QDialog(self)
+        aboutDialog.setWindowTitle('About Knoblauch Baguette Editor')
+
+        versionLabel = QLabel('Knoblauch Baguette Editor v0.3')
+
+        aboutDialogLayout = QVBoxLayout()
+        aboutDialogLayout.addWidget(versionLabel)
+        aboutDialog.setLayout(aboutDialogLayout)
+
+        aboutDialog.exec_()
 
     def setupFileExplorer(self):
         fileModel = QFileSystemModel()
