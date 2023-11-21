@@ -170,6 +170,11 @@ class CodeEditor(QMainWindow):
         aboutAction.triggered.connect(self.showAboutDialog)
         aboutMenu.addAction(aboutAction)
 
+        # Add "Import Stylesheet" action to the "About" menu
+        importStylesheetAction = QAction('Import Stylesheet', self)
+        importStylesheetAction.triggered.connect(self.importCustomStylesheet)
+        aboutMenu.addAction(importStylesheetAction)
+
         newShortcut = QKeySequence.New
         openShortcut = QKeySequence.Open
         saveShortcut = QKeySequence.Save
@@ -199,6 +204,18 @@ class CodeEditor(QMainWindow):
         self.setWindowTitle('Simple Code Editor')
         self.show()
 
+    def importCustomStylesheet(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        stylesheet_path, _ = QFileDialog.getOpenFileName(self, "Import Custom Stylesheet", "",
+                                                         "QSS Files (*.qss);;All Files (*)",
+                                                         options=options)
+
+        if stylesheet_path:
+            with open(stylesheet_path, 'r') as file:
+                stylesheet = file.read()
+                self.setStyleSheet(stylesheet)
+
     def initTerminal(self):
         self.terminalWidget = TerminalWidget()
 
@@ -211,7 +228,7 @@ class CodeEditor(QMainWindow):
         aboutDialog = QDialog(self)
         aboutDialog.setWindowTitle('About Knoblauch Baguette Editor')
 
-        versionLabel = QLabel('Knoblauch Baguette Editor Beta v0.3.5 Terminal Edition')
+        versionLabel = QLabel('Knoblauch Baguette Editor Beta v0.4')
 
         aboutDialogLayout = QVBoxLayout()
         aboutDialogLayout.addWidget(versionLabel)
